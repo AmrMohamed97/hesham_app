@@ -127,6 +127,8 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                           const SizedBox(height: 25),
                           _buildContactSection(),
                           const SizedBox(height: 25),
+                          _buildDescriptionSection(),
+                          const SizedBox(height: 25),
                           _buildServicesSection(),
                           const SizedBox(height: 25),
                           _buildStatsSection(),
@@ -225,6 +227,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                 children: [
                   _buildProfileImage(),
                   const SizedBox(height: 25),
+
                   _buildNameSection(),
                   const SizedBox(height: 20),
                   _buildSpecialtyTags(),
@@ -290,7 +293,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
-                  child: Image.asset('assets/hesham.jpg', fit: BoxFit.fill),
+                  child: Image.asset('assets/hesham.jpg', fit: BoxFit.cover),
                 ),
                 // Stack(
                 //   children: [
@@ -593,6 +596,60 @@ class _TailorProfilePageState extends State<TailorProfilePage>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDescriptionSection() {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 450),
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF1E293B).withOpacity(0.9),
+            Color(0xFF334155).withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Color(0xFFFFD700).withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              // Container(
+              //   padding: const EdgeInsets.all(10),
+              //   decoration: BoxDecoration(
+              //     gradient: LinearGradient(
+              //       colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+              //     ),
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              //   child: Icon(Icons.star, color: Colors.white, size: 20),
+              // ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "الأسطى هشام الزرقاني، ترزي بلدي بخبرة واسعة، قاد إدارة محل الحاج محمد عبده لمدة ست سنوات متواصلة، وامتازت أعماله بالجودة والدقة والذوق العصري، الأمر الذي جعل منتجاته تحظى بإعجاب العملاء وثقتهم.",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 15,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // _buildServiceItem('✂️', 'تفصيل عبايات رجالية فاخرة'),
+          // _buildServiceItem('📏', 'قياسات دقيقة ومحترفة'),
+          // _buildServiceItem('assets/design.jpeg', 'تصاميم عصرية وتقليدية'),
+          // _buildServiceItem('assets/komash.jpeg', 'أقمشة مستوردة عالية الجودة'),
+        ],
       ),
     );
   }
