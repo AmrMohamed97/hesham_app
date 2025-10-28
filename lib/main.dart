@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hesham_app/several_call_button.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:url_launcher/url_launcher.dart';
@@ -78,6 +79,13 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Padding(
+        padding: const EdgeInsetsDirectional.only(start: 16.0),
+        child: SeveralCallButton(
+          phoneNumber1: '+201015283663',
+          whatsApp: '+201015283663',
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -279,64 +287,65 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                     ),
                   ],
                 ),
-                child: Stack(
-                  children: [
-                    // Inner content
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('👔', style: TextStyle(fontSize: 60)),
-                          const SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              'PRO',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Shine effect
-                    AnimatedBuilder(
-                      animation: _pulseController,
-                      builder: (context, child) {
-                        return Positioned(
-                          top: -100 + (_pulseController.value * 320),
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.white.withOpacity(0),
-                                  Colors.white.withOpacity(0.4),
-                                  Colors.white.withOpacity(0),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                child: Image.asset('assets/design.jpeg', fit: BoxFit.fill),
+                // Stack(
+                //   children: [
+                //     // Inner content
+                //     Center(
+                //       child: Column(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           Text('👔', style: TextStyle(fontSize: 60)),
+                //           const SizedBox(height: 10),
+                //           Container(
+                //             padding: const EdgeInsets.symmetric(
+                //               horizontal: 12,
+                //               vertical: 4,
+                //             ),
+                //             decoration: BoxDecoration(
+                //               color: Colors.white.withOpacity(0.3),
+                //               borderRadius: BorderRadius.circular(12),
+                //             ),
+                //             child: Text(
+                //               'PRO',
+                //               style: TextStyle(
+                //                 color: Colors.white,
+                //                 fontSize: 12,
+                //                 fontWeight: FontWeight.bold,
+                //                 letterSpacing: 2,
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     // Shine effect
+                //     AnimatedBuilder(
+                //       animation: _pulseController,
+                //       builder: (context, child) {
+                //         return Positioned(
+                //           top: -100 + (_pulseController.value * 320),
+                //           left: 0,
+                //           right: 0,
+                //           child: Container(
+                //             height: 100,
+                //             decoration: BoxDecoration(
+                //               gradient: LinearGradient(
+                //                 begin: Alignment.topCenter,
+                //                 end: Alignment.bottomCenter,
+                //                 colors: [
+                //                   Colors.white.withOpacity(0),
+                //                   Colors.white.withOpacity(0.4),
+                //                   Colors.white.withOpacity(0),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     ),
+                //   ],
+                // ),
               ),
             ],
           ),
