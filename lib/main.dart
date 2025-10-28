@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hesham_app/several_call_button.dart';
 import 'dart:ui';
@@ -427,36 +428,46 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   }
 
   Widget _buildContactSection() {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 450),
-      child: Column(
-        children: [
-          _buildPhoneCard('📱', '01015283663', 0),
-          // const SizedBox(height: 15),
-          // _buildPhoneCard('☎️', '+20 111 234 5678', 100),
-          const SizedBox(height: 20),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: _buildActionButton(
-          //         '💬',
-          //         'واتساب',
-          //         Color(0xFF25D366),
-          //         () => _launchWhatsApp('+20100123456'),
-          //       ),
-          //     ),
-          //     const SizedBox(width: 15),
-          //     Expanded(
-          //       child: _buildActionButton(
-          //         '📞',
-          //         'اتصال',
-          //         Color(0xFFFFD700),
-          //         () => _makePhoneCall('+20100123456'),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        ],
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: Size(0, 0),
+      onPressed: () async {
+        Uri uri = Uri.parse('tel:+20 101 528 3663');
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        }
+      },
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 450),
+        child: Column(
+          children: [
+            _buildPhoneCard('📱', '01015283663', 0),
+            // const SizedBox(height: 15),
+            // _buildPhoneCard('☎️', '+20 111 234 5678', 100),
+            const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: _buildActionButton(
+            //         '💬',
+            //         'واتساب',
+            //         Color(0xFF25D366),
+            //         () => _launchWhatsApp('+20100123456'),
+            //       ),
+            //     ),
+            //     const SizedBox(width: 15),
+            //     Expanded(
+            //       child: _buildActionButton(
+            //         '📞',
+            //         'اتصال',
+            //         Color(0xFFFFD700),
+            //         () => _makePhoneCall('+20100123456'),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+          ],
+        ),
       ),
     );
   }
