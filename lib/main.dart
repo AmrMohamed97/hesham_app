@@ -288,7 +288,10 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                     ),
                   ],
                 ),
-                child: Image.asset('assets/hesham.jpg', fit: BoxFit.fill),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.asset('assets/hesham.jpg', fit: BoxFit.fill),
+                ),
                 // Stack(
                 //   children: [
                 //     // Inner content
