@@ -391,17 +391,17 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   }
 
   Widget _buildSpecialtyTags() {
-    final specialties = ['بلدي في إفرنجي', 'إفرنجي', 'بلدي'];
+    final specialties = ['عبايات', 'سودانى', 'إفرنجي', 'بلدي'];
     return Wrap(
-      spacing: 10,
-      runSpacing: 10,
+      spacing: 9.5,
+      runSpacing: 5,
       alignment: WrapAlignment.center,
       children: specialties.map((specialty) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.white.withOpacity(0.2)),
           ),
           child: Text(
@@ -673,7 +673,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       constraints: const BoxConstraints(maxWidth: 450),
       child: Row(
         children: [
-          Expanded(child: _buildStatCard('20+', 'سنة خبرة')),
+          Expanded(child: _buildStatCard('5⭐', 'تقييم العملاء')),
           const SizedBox(width: 15),
           Expanded(child: _buildStatCard('1000+', 'عميل راضي')),
           const SizedBox(width: 15),
