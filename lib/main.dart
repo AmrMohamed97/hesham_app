@@ -288,7 +288,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                     ),
                   ],
                 ),
-                child: Image.asset('assets/design.jpeg', fit: BoxFit.fill),
+                child: Image.asset('assets/hesham.jpg', fit: BoxFit.fill),
                 // Stack(
                 //   children: [
                 //     // Inner content
