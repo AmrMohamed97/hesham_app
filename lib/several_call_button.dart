@@ -25,7 +25,6 @@ class _SeveralCallButtonState extends State<SeveralCallButton>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    // controller.forward();
   }
 
   @override
@@ -40,7 +39,7 @@ class _SeveralCallButtonState extends State<SeveralCallButton>
       delegate: FlowMenuDelegate(controller: controller),
       children: [
         FloatingActionButton(
-          backgroundColor: Colors.black.withValues(alpha: .8),
+          backgroundColor: Colors.amber,
           heroTag: 'call',
           onPressed: () {
             if (controller.status == AnimationStatus.completed) {
@@ -49,17 +48,17 @@ class _SeveralCallButtonState extends State<SeveralCallButton>
               controller.forward();
             }
           },
-          child: Text(
-            'call',
-            style: const TextStyle(
+          child: const Text(
+            'اتصال',
+            style: TextStyle(
               fontSize: 16,
-              color: Colors.white70,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         FloatingActionButton(
-          backgroundColor: Colors.white70,
+          backgroundColor: Colors.white,
           heroTag: 'phone',
           onPressed: () async {
             Uri uri = Uri.parse('tel:${widget.phoneNumber1}');
@@ -68,42 +67,24 @@ class _SeveralCallButtonState extends State<SeveralCallButton>
             }
             controller.reverse();
           },
-          child: const Icon(Icons.phone, color: Colors.blue, size: 35),
+          child: const Icon(Icons.phone, color: Colors.blueAccent, size: 30),
         ),
         FloatingActionButton(
           backgroundColor: Colors.green,
           heroTag: 'whatsapp',
           onPressed: () async {
-             Uri uri = Uri.parse('https://wa.me/${widget.whatsApp}?text= ');
+            Uri uri = Uri.parse('https://wa.me/${widget.whatsApp}?text= ');
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri);
             }
             controller.reverse();
           },
-          child: Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              const Icon(
-                FontAwesomeIcons.whatsapp,
-                color: Colors.white,
-                size: 35,
-              ),
-              // Text(
-              //   '2',
-              //   style: TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.bold,
-              //     color: Colors.white,
-              //   ),
-              // ),
-            ],
-          ),
+          child: const Icon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 30),
         ),
       ],
     );
   }
 }
-
 class FlowMenuDelegate extends FlowDelegate {
   final Animation<double> controller;
   FlowMenuDelegate({required this.controller}) : super(repaint: controller);

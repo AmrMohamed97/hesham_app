@@ -18,10 +18,13 @@ class TailorShopApp extends StatelessWidget {
       title: 'الأسطى هشام الزرقانى',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: const Color(0xFFFFD700),
+        scaffoldBackgroundColor: const Color(0xFFFDFCFB),
         fontFamily: 'Cairo',
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontFamily: 'Cairo'),
-          bodyMedium: TextStyle(fontFamily: 'Cairo'),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFFFD700),
+          brightness: Brightness.light,
         ),
       ),
       home: const TailorProfilePage(),
@@ -88,19 +91,16 @@ class _TailorProfilePageState extends State<TailorProfilePage>
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0F172A)],
+            colors: [Color(0xFFFFFDF5), Color(0xFFF8F5E7)],
           ),
         ),
         child: Stack(
           children: [
-            // Animated background particles
-            ...List.generate(20, (index) => _buildParticle(index)),
-
-            // Main content
+            ...List.generate(15, (index) => _buildParticle(index)),
             SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -148,7 +148,6 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   Widget _buildParticle(int index) {
     final random = math.Random(index);
     final size = random.nextDouble() * 4 + 2;
-    // final duration = random.nextInt(10) + 10;
     final delay = random.nextInt(5);
 
     return AnimatedBuilder(
@@ -167,8 +166,8 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    Color(0xFFFFD700).withOpacity(0.8),
-                    Color(0xFFFFD700).withOpacity(0),
+                    const Color(0xFFFFC300).withOpacity(0.8),
+                    const Color(0xFFFFD700).withOpacity(0),
                   ],
                 ),
               ),
@@ -183,58 +182,29 @@ class _TailorProfilePageState extends State<TailorProfilePage>
     return Container(
       constraints: const BoxConstraints(maxWidth: 450),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF1E293B).withOpacity(0.9),
-            Color(0xFF334155).withOpacity(0.8),
-          ],
+        borderRadius: BorderRadius.circular(25),
+        gradient: const LinearGradient(
+          colors: [Colors.white, Color(0xFFFFF8E1)],
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFFFFD700).withOpacity(0.3),
-            blurRadius: 40,
-            spreadRadius: -5,
-            offset: const Offset(0, 20),
+            color: Colors.amber.withOpacity(0.3),
+            blurRadius: 25,
+            offset: const Offset(0, 10),
           ),
         ],
+        border: Border.all(color: const Color(0xFFFFD700), width: 1.2),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: Color(0xFFFFD700).withOpacity(0.3),
-                width: 1.5,
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.1),
-                  Colors.white.withOpacity(0.05),
-                ],
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Column(
-                children: [
-                  _buildProfileImage(),
-                  const SizedBox(height: 25),
-
-                  _buildNameSection(),
-                  const SizedBox(height: 20),
-                  _buildSpecialtyTags(),
-                ],
-              ),
-            ),
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(
+          children: [
+            _buildProfileImage(),
+            const SizedBox(height: 20),
+            _buildNameSection(),
+            const SizedBox(height: 15),
+            _buildSpecialtyTags(),
+          ],
         ),
       ),
     );
@@ -246,115 +216,22 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       builder: (context, child) {
         return Transform.translate(
           offset: Offset(0, math.sin(_floatingController.value * math.pi) * 10),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Outer glow ring
-              AnimatedBuilder(
-                animation: _pulseController,
-                builder: (context, child) {
-                  return Container(
-                    width:
-                        180 +
-                        (math.sin(_pulseController.value * math.pi * 2) * 20),
-                    height:
-                        260 +
-                        (math.sin(_pulseController.value * math.pi * 2) * 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      gradient: RadialGradient(
-                        colors: [
-                          Color(0xFFFFD700).withOpacity(0.3),
-                          Color(0xFFFFD700).withOpacity(0),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              // Image container
-              Container(
-                width: 140,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: [
+                BoxShadow(color: Colors.amber.withOpacity(0.4), blurRadius: 25),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                'assets/hesham.jpg',
+                width: 150,
                 height: 220,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFFFFD700).withOpacity(0.5),
-                      blurRadius: 30,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.asset('assets/hesham.jpg', fit: BoxFit.cover),
-                ),
-                // Stack(
-                //   children: [
-                //     // Inner content
-                //     Center(
-                //       child: Column(
-                //         mainAxisAlignment: MainAxisAlignment.center,
-                //         children: [
-                //           Text('👔', style: TextStyle(fontSize: 60)),
-                //           const SizedBox(height: 10),
-                //           Container(
-                //             padding: const EdgeInsets.symmetric(
-                //               horizontal: 12,
-                //               vertical: 4,
-                //             ),
-                //             decoration: BoxDecoration(
-                //               color: Colors.white.withOpacity(0.3),
-                //               borderRadius: BorderRadius.circular(12),
-                //             ),
-                //             child: Text(
-                //               'PRO',
-                //               style: TextStyle(
-                //                 color: Colors.white,
-                //                 fontSize: 12,
-                //                 fontWeight: FontWeight.bold,
-                //                 letterSpacing: 2,
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //     // Shine effect
-                //     AnimatedBuilder(
-                //       animation: _pulseController,
-                //       builder: (context, child) {
-                //         return Positioned(
-                //           top: -100 + (_pulseController.value * 320),
-                //           left: 0,
-                //           right: 0,
-                //           child: Container(
-                //             height: 100,
-                //             decoration: BoxDecoration(
-                //               gradient: LinearGradient(
-                //                 begin: Alignment.topCenter,
-                //                 end: Alignment.bottomCenter,
-                //                 colors: [
-                //                   Colors.white.withOpacity(0),
-                //                   Colors.white.withOpacity(0.4),
-                //                   Colors.white.withOpacity(0),
-                //                 ],
-                //               ),
-                //             ),
-                //           ),
-                //         );
-                //       },
-                //     ),
-                //   ],
-                // ),
+                fit: BoxFit.cover,
               ),
-            ],
+            ),
           ),
         );
       },
@@ -364,39 +241,27 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   Widget _buildNameSection() {
     return Column(
       children: [
-        ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: [Color(0xFFFFD700), Color(0xFFFFFAF0), Color(0xFFFFD700)],
-          ).createShader(bounds),
-          child: Text(
-            'الأسطى/ هشام الزرقانى',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              height: 1.4,
-              letterSpacing: 0.5,
-            ),
+        Text(
+          'الأسطى/ هشام الزرقانى',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFFFFD700).withOpacity(0.2),
-                Color(0xFFFFA500).withOpacity(0.2),
-              ],
-            ),
+            color: Colors.amber.shade50,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Color(0xFFFFD700).withOpacity(0.5)),
+            border: Border.all(color: Colors.amber.shade200),
           ),
-          child: Text(
+          child: const Text(
             '⭐⭐⭐⭐⭐ - تقييم العملاء',
             style: TextStyle(
-              color: Color(0xFFFFD700),
+              color: Color(0xFFD4AF37),
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -408,299 +273,163 @@ class _TailorProfilePageState extends State<TailorProfilePage>
 
   Widget _buildSpecialtyTags() {
     final specialties = ['عبايات', 'سودانى', 'إفرنجي', 'بلدي'];
-    return Wrap(
-      spacing: 9.5,
-      runSpacing: 5,
-      alignment: WrapAlignment.center,
-      children: specialties.map((specialty) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
-          ),
-          child: Text(
-            specialty,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        spacing: 6,
+        // runSpacing: 0,
+        // alignment: WrapAlignment.center,
+        children: specialties.map((specialty) {
+          return Chip(
+            backgroundColor: Colors.amber.shade50,
+            label: Text(
+              specialty,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-        );
-      }).toList(),
+            side: BorderSide(color: Colors.amber.shade200),
+          );
+        }).toList(),
+      ),
     );
   }
 
   Widget _buildContactSection() {
     return CupertinoButton(
       padding: EdgeInsets.zero,
-      minimumSize: Size(0, 0),
+      minimumSize: Size.zero,
       onPressed: () async {
-        Uri uri = Uri.parse('tel:+20 101 528 3663');
+        Uri uri = Uri.parse('tel:+201015283663');
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri);
         }
       },
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 450),
-        child: Column(
-          children: [
-            _buildPhoneCard('📱', '01015283663', 0),
-            // const SizedBox(height: 15),
-            // _buildPhoneCard('☎️', '+20 111 234 5678', 100),
-            const SizedBox(height: 20),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: _buildActionButton(
-            //         '💬',
-            //         'واتساب',
-            //         Color(0xFF25D366),
-            //         () => _launchWhatsApp('+20100123456'),
-            //       ),
-            //     ),
-            //     const SizedBox(width: 15),
-            //     Expanded(
-            //       child: _buildActionButton(
-            //         '📞',
-            //         'اتصال',
-            //         Color(0xFFFFD700),
-            //         () => _makePhoneCall('+20100123456'),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-          ],
-        ),
-      ),
+      child: _buildPhoneCard('📱', '01015283663'),
     );
   }
 
-  Widget _buildPhoneCard(String icon, String number, int delay) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 800 + delay),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(50 * (1 - value), 0),
-          child: Opacity(opacity: value, child: child),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1E293B).withOpacity(0.9),
-              Color(0xFF334155).withOpacity(0.8),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Color(0xFFFFD700).withOpacity(0.3)),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xFFFFD700).withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                ),
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xFFFFD700).withOpacity(0.4),
-                    blurRadius: 15,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(icon, style: const TextStyle(fontSize: 24)),
-              ),
-            ),
-            const SizedBox(width: 15),
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: Text(
-                number,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    String icon,
-    String text,
-    Color color,
-    VoidCallback onPressed,
-  ) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [color, color.withOpacity(0.7)],
-            ),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.4),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(icon, style: const TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
-              Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDescriptionSection() {
+  Widget _buildPhoneCard(String icon, String number) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 450),
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF1E293B).withOpacity(0.9),
-            Color(0xFF334155).withOpacity(0.8),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Color(0xFFFFD700).withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // Container(
-              //   padding: const EdgeInsets.all(10),
-              //   decoration: BoxDecoration(
-              //     gradient: LinearGradient(
-              //       colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-              //     ),
-              //     borderRadius: BorderRadius.circular(12),
-              //   ),
-              //   child: Icon(Icons.star, color: Colors.white, size: 20),
-              // ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  "الأسطى هشام الزرقاني، ترزي بلدي بخبرة واسعة، قاد إدارة محل الحاج محمد عبده لمدة ست سنوات متواصلة، وامتازت أعماله بالجودة والدقة والذوق العصري، الأمر الذي جعل منتجاته تحظى بإعجاب العملاء وثقتهم.",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 15,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
+        border: Border.all(color: Colors.amber.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.amber.withOpacity(0.15),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
-          const SizedBox(height: 20),
-          // _buildServiceItem('✂️', 'تفصيل عبايات رجالية فاخرة'),
-          // _buildServiceItem('📏', 'قياسات دقيقة ومحترفة'),
-          // _buildServiceItem('assets/design.jpeg', 'تصاميم عصرية وتقليدية'),
-          // _buildServiceItem('assets/komash.jpeg', 'أقمشة مستوردة عالية الجودة'),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+              ),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: const Center(
+              child: Text('📱', style: TextStyle(fontSize: 24)),
+            ),
+          ),
+          const SizedBox(width: 15),
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text(
+              number,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
+  Widget _buildDescriptionSection() {
+    return _infoCard(
+      "الأسطى هشام الزرقاني، ترزي بلدي بخبرة واسعة، قاد إدارة محل الحاج محمد عبده لمدة ست سنوات متواصلة، وامتازت أعماله بالجودة والدقة والذوق العصري، الأمر الذي جعل منتجاته تحظى بإعجاب العملاء وثقتهم.",
+    );
+  }
+
   Widget _buildServicesSection() {
+    return _infoCard(
+      null,
+      title: 'خدماتنا المتميزة',
+      children: [
+        _buildServiceItem('✂️', 'تفصيل عبايات رجالية فاخرة'),
+        _buildServiceItem('📏', 'قياسات دقيقة ومحترفة'),
+        _buildServiceItem('assets/design.jpeg', 'تصاميم عصرية وتقليدية'),
+        _buildServiceItem('assets/komash.jpeg', 'أقمشة مستوردة عالية الجودة'),
+      ],
+    );
+  }
+
+  Widget _infoCard(String? text, {String? title, List<Widget>? children}) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 450),
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF1E293B).withOpacity(0.9),
-            Color(0xFF334155).withOpacity(0.8),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Color(0xFFFFD700).withOpacity(0.3)),
+        border: Border.all(color: Colors.amber.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.amber.withOpacity(0.15),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+          if (title != null)
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  child: const Icon(Icons.star, color: Colors.white, size: 20),
                 ),
-                child: Icon(Icons.star, color: Colors.white, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'خدماتنا المتميزة',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
+              ],
+            ),
+          if (text != null)
+            Text(
+              text,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 15,
+                height: 1.5,
               ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _buildServiceItem('✂️', 'تفصيل عبايات رجالية فاخرة'),
-          _buildServiceItem('📏', 'قياسات دقيقة ومحترفة'),
-          _buildServiceItem('assets/design.jpeg', 'تصاميم عصرية وتقليدية'),
-          _buildServiceItem('assets/komash.jpeg', 'أقمشة مستوردة عالية الجودة'),
+            ),
+          if (children != null) ...[const SizedBox(height: 15), ...children],
         ],
       ),
     );
@@ -708,14 +437,14 @@ class _TailorProfilePageState extends State<TailorProfilePage>
 
   Widget _buildServiceItem(String icon, String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.amber.shade50,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -736,8 +465,8 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
+              style: const TextStyle(
+                color: Colors.black87,
                 fontSize: 15,
                 height: 1.5,
               ),
@@ -765,58 +494,36 @@ class _TailorProfilePageState extends State<TailorProfilePage>
 
   Widget _buildStatCard(String number, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF1E293B).withOpacity(0.9),
-            Color(0xFF334155).withOpacity(0.8),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Color(0xFFFFD700).withOpacity(0.3)),
+        border: Border.all(color: Colors.amber.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.amber.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          ShaderMask(
-            shaderCallback: (bounds) => LinearGradient(
-              colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-            ).createShader(bounds),
-            child: Text(
-              number,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+          Text(
+            number,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
           ),
           const SizedBox(height: 5),
           Text(
             label,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
           ),
         ],
       ),
     );
-  }
-
-  Future<void> _launchWhatsApp(String phone) async {
-    final Uri url = Uri.parse('https://wa.me/$phone');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _makePhoneCall(String phone) async {
-    final Uri url = Uri.parse('tel:$phone');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    }
   }
 }
