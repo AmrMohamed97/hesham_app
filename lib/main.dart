@@ -3,11 +3,9 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hesham_app/several_call_button.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// Single-file modernized Tailor Profile
-// Assets required (keep as in original): assets/hesham.jpg, assets/design.jpeg, assets/komash.jpeg
 
 void main() {
   runApp(const TailorShopApp());
@@ -96,7 +94,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       ),
       body: Stack(
         children: [
-          // animated gradient background with subtle noise/motion
+          // خلفية متحركة ناعمة
           AnimatedBuilder(
             animation: _bgController,
             builder: (context, child) {
@@ -119,39 +117,53 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 32,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 32),
                 child: FadeTransition(
                   opacity: CurvedAnimation(
                     parent: _entranceController,
                     curve: Curves.easeOut,
                   ),
                   child: SlideTransition(
-                    position:
-                        Tween<Offset>(
-                          begin: const Offset(0, 0.06),
-                          end: Offset.zero,
-                        ).animate(
-                          CurvedAnimation(
-                            parent: _entranceController,
-                            curve: Curves.easeOutCubic,
-                          ),
-                        ),
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 0.06),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(
+                        parent: _entranceController,
+                        curve: Curves.easeOutCubic,
+                      ),
+                    ),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 760),
                       child: Column(
                         children: [
-                          _buildTopCard(mq.width),
+                          _buildTopCard(mq.width)
+                              .animate()
+                              .fadeIn(duration: 800.ms, curve: Curves.easeOut)
+                              .slideY(begin: 0.2, end: 0),
                           const SizedBox(height: 20),
-                          _buildInfoRow(),
+                          _buildInfoRow()
+                              .animate()
+                              .fadeIn(duration: 900.ms)
+                              .slideX(begin: 0.3, end: 0),
                           const SizedBox(height: 18),
-                          _buildServicesGrid(),
+                          _buildServicesGrid()
+                              .animate()
+                              .fadeIn(duration: 1000.ms)
+                              .slideY(begin: 0.3, end: 0),
                           const SizedBox(height: 18),
-                          _buildStatsRow(),
+                          _buildStatsRow()
+                              .animate()
+                              .fadeIn(duration: 1100.ms)
+                              .slideX(begin: -0.3, end: 0),
                           const SizedBox(height: 26),
-                          _buildFooter(),
+                          _buildFooter()
+                              .animate()
+                              .fadeIn(duration: 1200.ms)
+                              .scale(
+                                  begin: const Offset(0.9, 0.9),
+                                  end: const Offset(1, 1)),
                         ],
                       ),
                     ),
@@ -164,12 +176,10 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       ),
     );
   }
-
   Widget _buildTopCard(double fullWidth) {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // glass card
         Container(
           padding: const EdgeInsets.all(8).copyWith(top: 15),
           margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -184,7 +194,6 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                 offset: const Offset(0, 8),
               ),
             ],
-            // backdrop filtered via BackdropFilter in child
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(22),
@@ -201,17 +210,14 @@ class _TailorProfilePageState extends State<TailorProfilePage>
             ),
           ),
         ),
-        // floating gold accent at top-right
         Positioned(
           top: 1,
           right: 6,
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                  horizontal: 12,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
@@ -245,23 +251,11 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // FittedBox(
-            //   fit: BoxFit.scaleDown,
-            //   child: Text(
-            //     '',
-            //     style: const TextStyle(
-            //       fontSize: 22,
-            //       fontWeight: FontWeight.w800,
-            //       color: Colors.white,
-            //     ),
-            //   ),
-            // ),
-            Text(
+            const Text(
               'الأسطى/ هشام الزرقاني',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -281,7 +275,6 @@ class _TailorProfilePageState extends State<TailorProfilePage>
               fit: BoxFit.scaleDown,
               child: Row(
                 spacing: 3,
-                // runSpacing: 0,
                 children: ['بلدي', 'إفرنجي', 'سودانى', 'عبايات'].map((t) {
                   return Chip(
                     padding: const EdgeInsets.all(0),
@@ -312,23 +305,20 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                         color: const Color(0xFFFFD700),
                         borderRadius: BorderRadius.circular(12),
                       ),
-
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.call, color: Colors.white),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'اتصل الآن',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.call, color: Colors.white),
+                          SizedBox(width: 6),
+                          Text(
+                            'اتصل الآن',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -339,9 +329,8 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                     padding: EdgeInsets.zero,
                     minimumSize: const Size(0, 0),
                     onPressed: () async {
-                      final uri = Uri.parse(
-                        'https://wa.me/+201015283663?text=مرحبا',
-                      );
+                      final uri =
+                          Uri.parse('https://wa.me/+201015283663?text=مرحبا');
                       if (await canLaunchUrl(uri)) await launchUrl(uri);
                     },
                     child: Container(
@@ -356,23 +345,20 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                           color: Colors.white.withOpacity(0.4),
                         ),
                       ),
-
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          children: [
-                            const Icon(FontAwesomeIcons.whatsapp, size: 18),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'واتساب',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(FontAwesomeIcons.whatsapp, size: 18),
+                          SizedBox(width: 6),
+                          Text(
+                            'واتساب',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -467,20 +453,11 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       ],
     );
   }
-
   Widget _buildServicesGrid() {
     final services = [
-      {
-        'icon': '✂️',
-        'title': 'تفصيل حسب المقاس',
-        'desc': 'تفصيل دقيق يلائم ذوقك',
-      },
+      {'icon': '✂️', 'title': 'تفصيل حسب المقاس', 'desc': 'تفصيل دقيق يلائم ذوقك'},
       {'icon': '📦', 'title': 'تجهيز سريع', 'desc': 'تسليم بالموعــد'},
-      {
-        'icon': 'assets/komash.jpeg',
-        'title': 'أقمشة راقية',
-        'desc': 'منتقاة بعناية',
-      },
+      {'icon': 'assets/komash.jpeg', 'title': 'أقمشة راقية', 'desc': 'منتقاة بعناية'},
       {'icon': '⭐', 'title': 'خدمة ما بعد البيع', 'desc': 'دعم وضمان جودة'},
     ];
 
@@ -496,93 +473,83 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       itemCount: services.length,
       itemBuilder: (context, i) {
         final s = services[i];
-        return AnimatedBuilder(
-          animation: _entranceController,
-          builder: (context, child) {
-            final anim = CurvedAnimation(
-              parent: _entranceController,
-              curve: Interval(0.1 * i, 0.6 + 0.1 * i, curve: Curves.easeOut),
-            );
-            return Opacity(
-              opacity: anim.value,
-              child: Transform.translate(
-                offset: Offset(0, 12 * (1 - anim.value)),
-                child: child,
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: _entranceController,
+            curve: Interval(0.1 * i, 0.6 + 0.1 * i, curve: Curves.easeOut),
+          ),
+          child: Transform.translate(
+            offset: Offset(0, 20 * (1 - _entranceController.value)),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.03),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.white.withOpacity(0.04)),
               ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withOpacity(0.04)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.amber.withOpacity(0.06),
+                          blurRadius: 10,
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.amber.withOpacity(0.06),
-                        blurRadius: 10,
-                      ),
-                    ],
+                    child: Center(
+                      child: s['icon']!.contains('jpeg')
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: Image.asset(
+                                s['icon']!,
+                                fit: BoxFit.cover,
+                                height: 25,
+                                width: 25,
+                              ),
+                            )
+                          : Text(s['icon']!, style: const TextStyle(fontSize: 20)),
+                    ),
                   ),
-                  child: Center(
-                    child: s['icon']!.contains('jpeg')
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: Image.asset(
-                              s['icon']!,
-                              fit: BoxFit.cover,
-                              height: 25,
-                              width: 25,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            s['title']!,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                          )
-                        : Text(
-                            s['icon']!,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          s['title']!,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          s['desc']!,
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 13,
+                        const SizedBox(height: 6),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            s['desc']!,
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -605,10 +572,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   Widget _buildFooter() {
     return Column(
       children: [
-        Text(
-          'اتصل على: 01015283663',
-          style: TextStyle(color: Colors.grey.shade500),
-        ),
+        Text('اتصل على: 01015283663', style: TextStyle(color: Colors.grey.shade500)),
         const SizedBox(height: 6),
         Text(
           '© ${2025} الأسطى هشام الزرقانى',
@@ -639,11 +603,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
-                  Icons.info_outline,
-                  size: 18,
-                  color: Colors.black87,
-                ),
+                child: const Icon(Icons.info_outline, size: 18, color: Colors.black87),
               ),
               const SizedBox(width: 10),
               Text(
@@ -657,15 +617,12 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           ),
           if (text != null) ...[
             const SizedBox(height: 8),
-            Text(
-              text,
-              style: TextStyle(color: Colors.grey.shade300, height: 1.5),
-            ),
+            Text(text, style: TextStyle(color: Colors.grey.shade300, height: 1.5)),
           ],
           if (children != null) ...[const SizedBox(height: 8), ...children],
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
   }
 
   Widget _serviceTile(String icon, String text, {bool isImage = false}) {
@@ -685,20 +642,13 @@ class _TailorProfilePageState extends State<TailorProfilePage>
               child: isImage
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: Image.asset(
-                        icon,
-                        width: 26,
-                        height: 26,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset(icon, width: 26, height: 26, fit: BoxFit.cover),
                     )
                   : Text(icon, style: const TextStyle(fontSize: 18)),
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Text(text, style: TextStyle(color: Colors.grey.shade300)),
-          ),
+          Expanded(child: Text(text, style: TextStyle(color: Colors.grey.shade300))),
         ],
       ),
     );
@@ -722,20 +672,13 @@ class _TailorProfilePageState extends State<TailorProfilePage>
             },
             child: Text(
               number,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
   }
 }
