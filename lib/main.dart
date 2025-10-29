@@ -16,18 +16,34 @@ class TailorShopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = ThemeData.dark();
+    // Dark Theme
+    final darkBase = ThemeData.dark();
+    final darkTheme = darkBase.copyWith(
+      colorScheme: darkBase.colorScheme.copyWith(
+        primary: const Color(0xFFFFD700),
+        secondary: const Color(0xFFFFC107),
+      ),
+      scaffoldBackgroundColor: const Color(0xFF0B0B0D),
+      textTheme: darkBase.textTheme.apply(fontFamily: 'Cairo'),
+    );
+
+    // Light Theme
+    final lightBase = ThemeData.light();
+    final lightTheme = lightBase.copyWith(
+      colorScheme: lightBase.colorScheme.copyWith(
+        primary: const Color(0xFFFFD700),
+        secondary: const Color(0xFFFFC107),
+      ),
+      scaffoldBackgroundColor: const Color(0xFFF5F5F7),
+      textTheme: lightBase.textTheme.apply(fontFamily: 'Cairo'),
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'الأسطى هشام الزرقانى',
-      theme: base.copyWith(
-        colorScheme: base.colorScheme.copyWith(
-          primary: const Color(0xFFFFD700),
-          secondary: const Color(0xFFFFC107),
-        ),
-        scaffoldBackgroundColor: const Color(0xFF0B0B0D),
-        textTheme: base.textTheme.apply(fontFamily: 'Cairo'),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system, // يتبع ثيم النظام تلقائياً
       home: const TailorProfilePage(),
     );
   }
@@ -46,9 +62,12 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   late AnimationController _bgController;
   late AnimationController _menuController;
   late AnimationController _pulseController;
-
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
+    _scrollController.addListener(() {
+      setState(() {});
+    });
     super.initState();
     _entranceController = AnimationController(
       vsync: this,
@@ -83,6 +102,8 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       extendBody: true,
       floatingActionButton: Padding(
@@ -107,7 +128,9 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                       -1,
                     ),
                     end: Alignment(0.8 - 0.4 * math.cos(t * math.pi * 2), 1),
-                    colors: const [Color(0xFF070606), Color(0xFF1A1A1C)],
+                    colors: isDark
+                        ? const [Color(0xFF070606), Color(0xFF1A1A1C)]
+                        : const [Color(0xFFFFFFFF), Color(0xFFE8E8EA)],
                   ),
                 ),
               );
@@ -117,53 +140,58 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 32),
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 32,
+                ),
                 child: FadeTransition(
                   opacity: CurvedAnimation(
                     parent: _entranceController,
                     curve: Curves.easeOut,
                   ),
                   child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, 0.06),
-                      end: Offset.zero,
-                    ).animate(
-                      CurvedAnimation(
-                        parent: _entranceController,
-                        curve: Curves.easeOutCubic,
-                      ),
-                    ),
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(0, 0.06),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: _entranceController,
+                            curve: Curves.easeOutCubic,
+                          ),
+                        ),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 760),
                       child: Column(
                         children: [
-                          _buildTopCard(mq.width)
+                          _buildTopCard(mq.width, isDark)
                               .animate()
                               .fadeIn(duration: 800.ms, curve: Curves.easeOut)
                               .slideY(begin: 0.2, end: 0),
                           const SizedBox(height: 20),
-                          _buildInfoRow()
+                          _buildInfoRow(isDark)
                               .animate()
                               .fadeIn(duration: 900.ms)
                               .slideX(begin: 0.3, end: 0),
                           const SizedBox(height: 18),
-                          _buildServicesGrid()
+                          _buildServicesGrid(isDark)
                               .animate()
-                              .fadeIn(duration: 1000.ms)
+                              .fadeIn(duration: 1200.ms)
                               .slideY(begin: 0.3, end: 0),
                           const SizedBox(height: 18),
-                          _buildStatsRow()
+                          _buildStatsRow(isDark)
                               .animate()
                               .fadeIn(duration: 1100.ms)
                               .slideX(begin: -0.3, end: 0),
                           const SizedBox(height: 26),
-                          _buildFooter()
+                          _buildFooter(isDark)
                               .animate()
                               .fadeIn(duration: 1200.ms)
                               .scale(
-                                  begin: const Offset(0.9, 0.9),
-                                  end: const Offset(1, 1)),
+                                begin: const Offset(0.9, 0.9),
+                                end: const Offset(1, 1),
+                              ),
                         ],
                       ),
                     ),
@@ -176,7 +204,8 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       ),
     );
   }
-  Widget _buildTopCard(double fullWidth) {
+
+  Widget _buildTopCard(double fullWidth, bool isDark) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -185,11 +214,19 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           margin: const EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
-            color: Colors.white.withOpacity(0.04),
-            border: Border.all(color: Colors.white.withOpacity(0.06)),
+            color: isDark
+                ? Colors.white.withOpacity(0.04)
+                : Colors.white.withOpacity(0.7),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.06)
+                  : Colors.black.withOpacity(0.08),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.6),
+                color: isDark
+                    ? Colors.black.withOpacity(0.6)
+                    : Colors.black.withOpacity(0.1),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
@@ -202,9 +239,9 @@ class _TailorProfilePageState extends State<TailorProfilePage>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(child: _buildProfileInfo()),
+                  Expanded(child: _buildProfileInfo(isDark)),
                   const SizedBox(width: 8),
-                  _buildProfileImageWithParallax(),
+                  _buildProfileImageWithParallax(isDark),
                 ],
               ),
             ),
@@ -216,8 +253,10 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           child: Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 4,
+                  horizontal: 12,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
@@ -245,7 +284,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
     );
   }
 
-  Widget _buildProfileInfo() {
+  Widget _buildProfileInfo(bool isDark) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
@@ -253,12 +292,12 @@ class _TailorProfilePageState extends State<TailorProfilePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'الأسطى/ هشام الزرقاني',
               style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
@@ -267,7 +306,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
               style: TextStyle(
                 fontSize: 10.5,
                 fontWeight: FontWeight.w200,
-                color: Colors.grey.shade50,
+                color: isDark ? Colors.grey.shade50 : Colors.grey.shade800,
               ),
             ),
             const SizedBox(height: 12),
@@ -278,9 +317,20 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                 children: ['بلدي', 'إفرنجي', 'سودانى', 'عبايات'].map((t) {
                   return Chip(
                     padding: const EdgeInsets.all(0),
-                    backgroundColor: Colors.black.withOpacity(0.3),
-                    side: BorderSide(color: Colors.white.withOpacity(0.04)),
-                    label: Text(t, style: const TextStyle(color: Colors.white)),
+                    backgroundColor: isDark
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.white.withOpacity(0.5),
+                    side: BorderSide(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.04)
+                          : Colors.black.withOpacity(0.1),
+                    ),
+                    label: Text(
+                      t,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
                   );
                 }).toList(),
               ),
@@ -329,8 +379,9 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                     padding: EdgeInsets.zero,
                     minimumSize: const Size(0, 0),
                     onPressed: () async {
-                      final uri =
-                          Uri.parse('https://wa.me/+201015283663?text=مرحبا');
+                      final uri = Uri.parse(
+                        'https://wa.me/+201015283663?text=مرحبا',
+                      );
                       if (await canLaunchUrl(uri)) await launchUrl(uri);
                     },
                     child: Container(
@@ -339,23 +390,31 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                         horizontal: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: isDark
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.white.withOpacity(0.8),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.4),
+                          color: isDark
+                              ? Colors.white.withOpacity(0.4)
+                              : Colors.black.withOpacity(0.2),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(FontAwesomeIcons.whatsapp, size: 18),
-                          SizedBox(width: 6),
+                          Icon(
+                            FontAwesomeIcons.whatsapp,
+                            size: 18,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                          const SizedBox(width: 6),
                           Text(
                             'واتساب',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ],
@@ -371,7 +430,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
     );
   }
 
-  Widget _buildProfileImageWithParallax() {
+  Widget _buildProfileImageWithParallax(bool isDark) {
     return Hero(
       tag: 'hesham-image',
       child: AnimatedBuilder(
@@ -388,24 +447,35 @@ class _TailorProfilePageState extends State<TailorProfilePage>
               height: 220,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.6),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                  BoxShadow(
-                    color: Colors.amber.withOpacity(0.08),
-                    blurRadius: 30,
-                    spreadRadius: 4,
-                  ),
-                ],
-                border: Border.all(color: Colors.white.withOpacity(0.06)),
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: isDark
+                //         ? Colors.black.withOpacity(0.6)
+                //         : Colors.black.withOpacity(0.2),
+                //     blurRadius: 20,
+                //     offset: const Offset(0, 10),
+                //   ),
+                //   BoxShadow(
+                //     color: Colors.amber.withOpacity(0.08),
+                //     blurRadius: 30,
+                //     spreadRadius: 4,
+                //   ),
+                // ],
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.06)
+                      : Colors.black.withOpacity(0.1),
+                ),
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.02),
-                    Colors.white.withOpacity(0.01),
-                  ],
+                  colors: isDark
+                      ? [
+                          Colors.white.withOpacity(0.02),
+                          Colors.white.withOpacity(0.01),
+                        ]
+                      : [
+                          Colors.white.withOpacity(0.5),
+                          Colors.white.withOpacity(0.3),
+                        ],
                 ),
               ),
               child: ClipRRect(
@@ -419,7 +489,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
     );
   }
 
-  Widget _buildInfoRow() {
+  Widget _buildInfoRow(bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,6 +497,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           child: _infoCard(
             'نبذة',
             'الأسطى هشام الزرقاني، ترزي بلدي بخبرة واسعة، قاد إدارة محل الحاج محمد عبده لمدة ست سنوات متواصلة، وامتازت أعماله بالجودة والدقة والذوق العصري.',
+            isDark: isDark,
           ),
         ),
         const SizedBox(width: 12),
@@ -434,17 +505,20 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           child: _infoCard(
             'ماذا نقدم',
             null,
+            isDark: isDark,
             children: [
-              _serviceTile('✂️', 'تفصيل عبايات رجالية فاخرة'),
-              _serviceTile('📏', 'قياسات دقيقة ومحترفة'),
+              _serviceTile('✂️', 'تفصيل عبايات رجالية فاخرة', isDark),
+              _serviceTile('📏', 'قياسات دقيقة ومحترفة', isDark),
               _serviceTile(
                 'assets/design.jpeg',
                 'تصاميم عصرية وتقليدية',
+                isDark,
                 isImage: true,
               ),
               _serviceTile(
                 'assets/komash.jpeg',
                 'أقمشة مستوردة عالية الجودة',
+                isDark,
                 isImage: true,
               ),
             ],
@@ -453,11 +527,20 @@ class _TailorProfilePageState extends State<TailorProfilePage>
       ],
     );
   }
-  Widget _buildServicesGrid() {
+
+  Widget _buildServicesGrid(bool isDark) {
     final services = [
-      {'icon': '✂️', 'title': 'تفصيل حسب المقاس', 'desc': 'تفصيل دقيق يلائم ذوقك'},
+      {
+        'icon': '✂️',
+        'title': 'تفصيل حسب المقاس',
+        'desc': 'تفصيل دقيق يلائم ذوقك',
+      },
       {'icon': '📦', 'title': 'تجهيز سريع', 'desc': 'تسليم بالموعــد'},
-      {'icon': 'assets/komash.jpeg', 'title': 'أقمشة راقية', 'desc': 'منتقاة بعناية'},
+      {
+        'icon': 'assets/komash.jpeg',
+        'title': 'أقمشة راقية',
+        'desc': 'منتقاة بعناية',
+      },
       {'icon': '⭐', 'title': 'خدمة ما بعد البيع', 'desc': 'دعم وضمان جودة'},
     ];
 
@@ -483,9 +566,15 @@ class _TailorProfilePageState extends State<TailorProfilePage>
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.03),
+                color: isDark
+                    ? Colors.white.withOpacity(0.03)
+                    : Colors.white.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.white.withOpacity(0.04)),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.04)
+                      : Colors.black.withOpacity(0.08),
+                ),
               ),
               child: Row(
                 children: [
@@ -515,7 +604,10 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                                 width: 25,
                               ),
                             )
-                          : Text(s['icon']!, style: const TextStyle(fontSize: 20)),
+                          : Text(
+                              s['icon']!,
+                              style: const TextStyle(fontSize: 20),
+                            ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -528,9 +620,9 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                           fit: BoxFit.scaleDown,
                           child: Text(
                             s['title']!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -540,7 +632,9 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                           child: Text(
                             s['desc']!,
                             style: TextStyle(
-                              color: Colors.grey.shade400,
+                              color: isDark
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade700,
                               fontSize: 13,
                             ),
                           ),
@@ -557,75 +651,112 @@ class _TailorProfilePageState extends State<TailorProfilePage>
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(bool isDark) {
     return Row(
       children: [
-        Expanded(child: _statCard('5⭐', 'تقييم العملاء', 1)),
+        Expanded(child: _statCard('5⭐', 'تقييم العملاء', 1, isDark)),
         const SizedBox(width: 12),
-        Expanded(child: _statCard('1000+', 'عميل راضي', 2)),
+        Expanded(child: _statCard('100%', 'عميل راضي', 2, isDark)),
         const SizedBox(width: 12),
-        Expanded(child: _statCard('100%', 'جودة عالية', 3)),
+        Expanded(child: _statCard('100%', 'جودة عالية', 3, isDark)),
       ],
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(bool isDark) {
     return Column(
       children: [
-        Text('اتصل على: 01015283663', style: TextStyle(color: Colors.grey.shade500)),
+        Text(
+          'اتصل على: 01015283663',
+          style: TextStyle(
+            color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+          ),
+        ),
         const SizedBox(height: 6),
         Text(
           '© ${2025} الأسطى هشام الزرقانى',
-          style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+          style: TextStyle(
+            color: isDark ? Colors.grey.shade700 : Colors.grey.shade500,
+            fontSize: 12,
+          ),
         ),
       ],
     );
   }
 
-  Widget _infoCard(String title, String? text, {List<Widget>? children}) {
+  Widget _infoCard(
+    String title,
+    String? text, {
+    List<Widget>? children,
+    required bool isDark,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withOpacity(0.04)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withOpacity(0.03)
+                : Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.04)
+                  : Colors.black.withOpacity(0.08),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: Colors.black87,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.info_outline, size: 18, color: Colors.black87),
+                  const SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              if (text != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                    height: 1.5,
+                  ),
                 ),
-              ),
+              ],
+              if (children != null) ...[const SizedBox(height: 8), ...children],
             ],
           ),
-          if (text != null) ...[
-            const SizedBox(height: 8),
-            Text(text, style: TextStyle(color: Colors.grey.shade300, height: 1.5)),
-          ],
-          if (children != null) ...[const SizedBox(height: 8), ...children],
-        ],
-      ),
-    ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
+        )
+        .animate()
+        .fadeIn(duration: 700.ms)
+        .slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
   }
 
-  Widget _serviceTile(String icon, String text, {bool isImage = false}) {
+  Widget _serviceTile(
+    String icon,
+    String text,
+    bool isDark, {
+    bool isImage = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
@@ -634,51 +765,88 @@ class _TailorProfilePageState extends State<TailorProfilePage>
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: isDark
+                  ? Colors.white.withOpacity(0.03)
+                  : Colors.white.withOpacity(0.5),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white.withOpacity(0.03)),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withOpacity(0.03)
+                    : Colors.black.withOpacity(0.05),
+              ),
             ),
             child: Center(
               child: isImage
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: Image.asset(icon, width: 26, height: 26, fit: BoxFit.cover),
+                      child: Image.asset(
+                        icon,
+                        width: 26,
+                        height: 26,
+                        fit: BoxFit.cover,
+                      ),
                     )
                   : Text(icon, style: const TextStyle(fontSize: 18)),
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(child: Text(text, style: TextStyle(color: Colors.grey.shade300))),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _statCard(String number, String label, int index) {
+  Widget _statCard(String number, String label, int index, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.03)),
-      ),
-      child: Column(
-        children: [
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: 1),
-            duration: Duration(milliseconds: 600 + index * 200),
-            builder: (context, value, child) {
-              return Opacity(opacity: value, child: child);
-            },
-            child: Text(
-              number,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withOpacity(0.02)
+                : Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.03)
+                  : Colors.black.withOpacity(0.08),
             ),
           ),
-          const SizedBox(height: 6),
-          Text(label, style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-        ],
-      ),
-    ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
+          child: Column(
+            children: [
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: 1),
+                duration: Duration(milliseconds: 600 + index * 200),
+                builder: (context, value, child) {
+                  return Opacity(opacity: value, child: child);
+                },
+                child: Text(
+                  number,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 700.ms)
+        .slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
   }
 }
