@@ -703,47 +703,56 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                   : Colors.black.withOpacity(0.08),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      child: const Icon(
+                        Icons.info_outline,
+                        size: 18,
+                        color: Colors.black87,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.info_outline,
-                      size: 18,
-                      color: Colors.black87,
+                    const SizedBox(width: 10),
+                    Text(
+                      title,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
+                  ],
+                ),
+                if (text != null) ...[
+                  const SizedBox(height: 8),
                   Text(
-                    title,
+                    text,
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: isDark
+                          ? Colors.grey.shade300
+                          : Colors.grey.shade800,
+                      height: 1.5,
                     ),
                   ),
                 ],
-              ),
-              if (text != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-                    height: 1.5,
-                  ),
-                ),
+                if (children != null) ...[
+                  const SizedBox(height: 8),
+                  ...children,
+                ],
               ],
-              if (children != null) ...[const SizedBox(height: 8), ...children],
-            ],
+            ),
           ),
         )
         .animate()
