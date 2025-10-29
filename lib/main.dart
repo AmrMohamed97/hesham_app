@@ -148,7 +148,7 @@ class _TailorProfilePageState extends State<TailorProfilePage>
   Widget _buildParticle(int index) {
     final random = math.Random(index);
     final size = random.nextDouble() * 4 + 2;
-    final duration = random.nextInt(10) + 10;
+    // final duration = random.nextInt(10) + 10;
     final delay = random.nextInt(5);
 
     return AnimatedBuilder(
