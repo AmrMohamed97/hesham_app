@@ -1,9 +1,13 @@
+import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hesham_app/several_call_button.dart';
-import 'dart:ui';
-import 'dart:math' as math;
 import 'package:url_launcher/url_launcher.dart';
+
+// Single-file modernized Tailor Profile
+// Assets required (keep as in original): assets/hesham.jpg, assets/design.jpeg, assets/komash.jpeg
 
 void main() {
   runApp(const TailorShopApp());
@@ -14,18 +18,17 @@ class TailorShopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = ThemeData.dark();
     return MaterialApp(
-      title: 'الأسطى هشام الزرقانى',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: const Color(0xFFFFD700),
-        scaffoldBackgroundColor: const Color(0xFFFDFCFB),
-        fontFamily: 'Cairo',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFFD700),
-          brightness: Brightness.light,
+      title: 'الأسطى هشام الزرقانى',
+      theme: base.copyWith(
+        colorScheme: base.colorScheme.copyWith(
+          primary: const Color(0xFFFFD700),
+          secondary: const Color(0xFFFFC107),
         ),
+        scaffoldBackgroundColor: const Color(0xFF0B0B0D),
+        textTheme: base.textTheme.apply(fontFamily: 'Cairo'),
       ),
       home: const TailorProfilePage(),
     );
@@ -41,48 +44,49 @@ class TailorProfilePage extends StatefulWidget {
 
 class _TailorProfilePageState extends State<TailorProfilePage>
     with TickerProviderStateMixin {
-  late AnimationController _mainController;
-  late AnimationController _floatingController;
+  late AnimationController _entranceController;
+  late AnimationController _bgController;
+  late AnimationController _menuController;
   late AnimationController _pulseController;
-  late AnimationController _rotateController;
 
   @override
   void initState() {
     super.initState();
-
-    _mainController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+    _entranceController = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 900),
     )..forward();
 
-    _floatingController = AnimationController(
-      duration: const Duration(seconds: 3),
+    _bgController = AnimationController(
       vsync: this,
-    )..repeat(reverse: true);
+      duration: const Duration(seconds: 8),
+    )..repeat();
+
+    _menuController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
 
     _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
       vsync: this,
-    )..repeat();
-
-    _rotateController = AnimationController(
-      duration: const Duration(seconds: 30),
-      vsync: this,
-    )..repeat();
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
-    _mainController.dispose();
-    _floatingController.dispose();
+    _entranceController.dispose();
+    _bgController.dispose();
+    _menuController.dispose();
     _pulseController.dispose();
-    _rotateController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
     return Scaffold(
+      extendBody: true,
       floatingActionButton: Padding(
         padding: const EdgeInsetsDirectional.only(start: 16.0),
         child: SeveralCallButton(
@@ -90,48 +94,64 @@ class _TailorProfilePageState extends State<TailorProfilePage>
           whatsApp: '+201015283663',
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFFFDF5), Color(0xFFF8F5E7)],
-          ),
-        ),
-        child: Stack(
-          children: [
-            ...List.generate(15, (index) => _buildParticle(index)),
-            SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 40,
+      body: Stack(
+        children: [
+          // animated gradient background with subtle noise/motion
+          AnimatedBuilder(
+            animation: _bgController,
+            builder: (context, child) {
+              final t = _bgController.value;
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(
+                      -0.8 + 0.4 * math.sin(t * math.pi * 2),
+                      -1,
+                    ),
+                    end: Alignment(0.8 - 0.4 * math.cos(t * math.pi * 2), 1),
+                    colors: const [Color(0xFF070606), Color(0xFF1A1A1C)],
                   ),
-                  child: FadeTransition(
-                    opacity: _mainController,
-                    child: SlideTransition(
-                      position:
-                          Tween<Offset>(
-                            begin: const Offset(0, 0.3),
-                            end: Offset.zero,
-                          ).animate(
-                            CurvedAnimation(
-                              parent: _mainController,
-                              curve: Curves.easeOutCubic,
-                            ),
+                ),
+              );
+            },
+          ),
+
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 32,
+                ),
+                child: FadeTransition(
+                  opacity: CurvedAnimation(
+                    parent: _entranceController,
+                    curve: Curves.easeOut,
+                  ),
+                  child: SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(0, 0.06),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: _entranceController,
+                            curve: Curves.easeOutCubic,
                           ),
+                        ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
                       child: Column(
                         children: [
-                          _buildProfileCard(),
-                          const SizedBox(height: 25),
-                          _buildContactSection(),
-                          const SizedBox(height: 25),
-                          _buildDescriptionSection(),
-                          const SizedBox(height: 25),
-                          _buildServicesSection(),
-                          const SizedBox(height: 25),
-                          _buildStatsSection(),
+                          _buildTopCard(mq.width),
+                          const SizedBox(height: 20),
+                          _buildInfoRow(),
+                          const SizedBox(height: 18),
+                          _buildServicesGrid(),
+                          const SizedBox(height: 18),
+                          _buildStatsRow(),
+                          const SizedBox(height: 26),
+                          _buildFooter(),
                         ],
                       ),
                     ),
@@ -139,388 +159,580 @@ class _TailorProfilePageState extends State<TailorProfilePage>
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopCard(double fullWidth) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // glass card
+        Container(
+          padding: const EdgeInsets.all(8).copyWith(top: 15),
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            color: Colors.white.withOpacity(0.04),
+            border: Border.all(color: Colors.white.withOpacity(0.06)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.6),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            // backdrop filtered via BackdropFilter in child
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: _buildProfileInfo()),
+                  const SizedBox(width: 8),
+                  _buildProfileImageWithParallax(),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // floating gold accent at top-right
+        Positioned(
+          top: 1,
+          right: 6,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 4,
+                  horizontal: 12,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.amber.withOpacity(0.15),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  'ترزي بلدي',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileInfo() {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // FittedBox(
+            //   fit: BoxFit.scaleDown,
+            //   child: Text(
+            //     '',
+            //     style: const TextStyle(
+            //       fontSize: 22,
+            //       fontWeight: FontWeight.w800,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // ),
+            Text(
+              'الأسطى/ هشام الزرقاني',
+              style: const TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'ترزي رجالي محترف يتميز بدقة الخياطة، جودة الخامات، وتصميمات عصرية تناسب جميع الأذواق، يجمع بين الأناقة والاحترافية العالية.',
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w200,
+                color: Colors.grey.shade50,
+              ),
+            ),
+            const SizedBox(height: 12),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                spacing: 3,
+                // runSpacing: 0,
+                children: ['بلدي', 'إفرنجي', 'سودانى', 'عبايات'].map((t) {
+                  return Chip(
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: Colors.black.withOpacity(0.3),
+                    side: BorderSide(color: Colors.white.withOpacity(0.04)),
+                    label: Text(t, style: const TextStyle(color: Colors.white)),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    onPressed: () async {
+                      final uri = Uri.parse('tel:+201015283663');
+                      if (await canLaunchUrl(uri)) await launchUrl(uri);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFD700),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.call, color: Colors.white),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'اتصل الآن',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    onPressed: () async {
+                      final uri = Uri.parse(
+                        'https://wa.me/+201015283663?text=مرحبا',
+                      );
+                      if (await canLaunchUrl(uri)) await launchUrl(uri);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.4),
+                        ),
+                      ),
+
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          children: [
+                            const Icon(FontAwesomeIcons.whatsapp, size: 18),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'واتساب',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildParticle(int index) {
-    final random = math.Random(index);
-    final size = random.nextDouble() * 4 + 2;
-    final delay = random.nextInt(5);
-
-    return AnimatedBuilder(
-      animation: _rotateController,
-      builder: (context, child) {
-        final progress = (_rotateController.value + (delay * 0.1)) % 1.0;
-        return Positioned(
-          left: random.nextDouble() * 400,
-          top: progress * MediaQuery.of(context).size.height,
-          child: Opacity(
-            opacity: (math.sin(progress * math.pi) * 0.5).clamp(0.0, 1.0),
+  Widget _buildProfileImageWithParallax() {
+    return Hero(
+      tag: 'hesham-image',
+      child: AnimatedBuilder(
+        animation: _bgController,
+        builder: (context, child) {
+          final rot = math.sin(_bgController.value * math.pi * 2) * 0.04;
+          return Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(rot),
             child: Container(
-              width: size,
-              height: size,
+              width: 143,
+              height: 220,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.6),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                  BoxShadow(
+                    color: Colors.amber.withOpacity(0.08),
+                    blurRadius: 30,
+                    spreadRadius: 4,
+                  ),
+                ],
+                border: Border.all(color: Colors.white.withOpacity(0.06)),
+                gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFFFC300).withOpacity(0.8),
-                    const Color(0xFFFFD700).withOpacity(0),
+                    Colors.white.withOpacity(0.02),
+                    Colors.white.withOpacity(0.01),
                   ],
                 ),
               ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildProfileCard() {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 450),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        gradient: const LinearGradient(
-          colors: [Colors.white, Color(0xFFFFF8E1)],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.amber.withOpacity(0.3),
-            blurRadius: 25,
-            offset: const Offset(0, 10),
-          ),
-        ],
-        border: Border.all(color: const Color(0xFFFFD700), width: 1.2),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(25),
-        child: Column(
-          children: [
-            _buildProfileImage(),
-            const SizedBox(height: 20),
-            _buildNameSection(),
-            const SizedBox(height: 15),
-            _buildSpecialtyTags(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return AnimatedBuilder(
-      animation: _floatingController,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, math.sin(_floatingController.value * math.pi) * 10),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(color: Colors.amber.withOpacity(0.4), blurRadius: 25),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/hesham.jpg',
-                width: 150,
-                height: 220,
-                fit: BoxFit.cover,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset('assets/hesham.jpg', fit: BoxFit.cover),
               ),
             ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildInfoRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _infoCard(
+            'نبذة',
+            'الأسطى هشام الزرقاني، ترزي بلدي بخبرة واسعة، قاد إدارة محل الحاج محمد عبده لمدة ست سنوات متواصلة، وامتازت أعماله بالجودة والدقة والذوق العصري.',
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _infoCard(
+            'ماذا نقدم',
+            null,
+            children: [
+              _serviceTile('✂️', 'تفصيل عبايات رجالية فاخرة'),
+              _serviceTile('📏', 'قياسات دقيقة ومحترفة'),
+              _serviceTile(
+                'assets/design.jpeg',
+                'تصاميم عصرية وتقليدية',
+                isImage: true,
+              ),
+              _serviceTile(
+                'assets/komash.jpeg',
+                'أقمشة مستوردة عالية الجودة',
+                isImage: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServicesGrid() {
+    final services = [
+      {
+        'icon': '✂️',
+        'title': 'تفصيل حسب المقاس',
+        'desc': 'تفصيل دقيق يلائم ذوقك',
+      },
+      {'icon': '📦', 'title': 'تجهيز سريع', 'desc': 'تسليم بالموعــد'},
+      {
+        'icon': 'assets/komash.jpeg',
+        'title': 'أقمشة راقية',
+        'desc': 'منتقاة بعناية',
+      },
+      {'icon': '⭐', 'title': 'خدمة ما بعد البيع', 'desc': 'دعم وضمان جودة'},
+    ];
+
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisExtent: 92,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: services.length,
+      itemBuilder: (context, i) {
+        final s = services[i];
+        return AnimatedBuilder(
+          animation: _entranceController,
+          builder: (context, child) {
+            final anim = CurvedAnimation(
+              parent: _entranceController,
+              curve: Interval(0.1 * i, 0.6 + 0.1 * i, curve: Curves.easeOut),
+            );
+            return Opacity(
+              opacity: anim.value,
+              child: Transform.translate(
+                offset: Offset(0, 12 * (1 - anim.value)),
+                child: child,
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withOpacity(0.04)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.amber.withOpacity(0.06),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: s['icon']!.contains('jpeg')
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.asset(
+                              s['icon']!,
+                              fit: BoxFit.cover,
+                              height: 25,
+                              width: 25,
+                            ),
+                          )
+                        : Text(
+                            s['icon']!,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          s['title']!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          s['desc']!,
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildNameSection() {
+  Widget _buildStatsRow() {
+    return Row(
+      children: [
+        Expanded(child: _statCard('5⭐', 'تقييم العملاء', 1)),
+        const SizedBox(width: 12),
+        Expanded(child: _statCard('1000+', 'عميل راضي', 2)),
+        const SizedBox(width: 12),
+        Expanded(child: _statCard('100%', 'جودة عالية', 3)),
+      ],
+    );
+  }
+
+  Widget _buildFooter() {
     return Column(
       children: [
         Text(
-          'الأسطى/ هشام الزرقانى',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          'اتصل على: 01015283663',
+          style: TextStyle(color: Colors.grey.shade500),
         ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.amber.shade50,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.amber.shade200),
-          ),
-          child: const Text(
-            '⭐⭐⭐⭐⭐ - تقييم العملاء',
-            style: TextStyle(
-              color: Color(0xFFD4AF37),
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+        const SizedBox(height: 6),
+        Text(
+          '© ${2025} الأسطى هشام الزرقانى',
+          style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
         ),
       ],
     );
   }
 
-  Widget _buildSpecialtyTags() {
-    final specialties = ['عبايات', 'سودانى', 'إفرنجي', 'بلدي'];
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Row(
-        spacing: 6,
-        // runSpacing: 0,
-        // alignment: WrapAlignment.center,
-        children: specialties.map((specialty) {
-          return Chip(
-            backgroundColor: Colors.amber.shade50,
-            label: Text(
-              specialty,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            side: BorderSide(color: Colors.amber.shade200),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildContactSection() {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      minimumSize: Size.zero,
-      onPressed: () async {
-        Uri uri = Uri.parse('tel:+201015283663');
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: _buildPhoneCard('📱', '01015283663'),
-    );
-  }
-
-  Widget _buildPhoneCard(String icon, String number) {
+  Widget _infoCard(String title, String? text, {List<Widget>? children}) {
     return Container(
-      constraints: const BoxConstraints(maxWidth: 450),
-      padding: const EdgeInsets.all(25),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.amber.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.amber.withOpacity(0.15),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-              ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Center(
-              child: Text('📱', style: TextStyle(fontSize: 24)),
-            ),
-          ),
-          const SizedBox(width: 15),
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text(
-              number,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDescriptionSection() {
-    return _infoCard(
-      "الأسطى هشام الزرقاني، ترزي بلدي بخبرة واسعة، قاد إدارة محل الحاج محمد عبده لمدة ست سنوات متواصلة، وامتازت أعماله بالجودة والدقة والذوق العصري، الأمر الذي جعل منتجاته تحظى بإعجاب العملاء وثقتهم.",
-    );
-  }
-
-  Widget _buildServicesSection() {
-    return _infoCard(
-      null,
-      title: 'خدماتنا المتميزة',
-      children: [
-        _buildServiceItem('✂️', 'تفصيل عبايات رجالية فاخرة'),
-        _buildServiceItem('📏', 'قياسات دقيقة ومحترفة'),
-        _buildServiceItem('assets/design.jpeg', 'تصاميم عصرية وتقليدية'),
-        _buildServiceItem('assets/komash.jpeg', 'أقمشة مستوردة عالية الجودة'),
-      ],
-    );
-  }
-
-  Widget _infoCard(String? text, {String? title, List<Widget>? children}) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 450),
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.amber.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.amber.withOpacity(0.15),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withOpacity(0.04)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null)
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
                   ),
-                  child: const Icon(Icons.star, color: Colors.white, size: 20),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                child: const Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: Colors.black87,
                 ),
-              ],
-            ),
-          if (text != null)
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          if (text != null) ...[
+            const SizedBox(height: 8),
             Text(
               text,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                height: 1.5,
-              ),
+              style: TextStyle(color: Colors.grey.shade300, height: 1.5),
             ),
-          if (children != null) ...[const SizedBox(height: 15), ...children],
+          ],
+          if (children != null) ...[const SizedBox(height: 8), ...children],
         ],
       ),
     );
   }
 
-  Widget _buildServiceItem(String icon, String text) {
+  Widget _serviceTile(String icon, String text, {bool isImage = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
-              color: Colors.amber.shade50,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.white.withOpacity(0.03)),
             ),
             child: Center(
-              child: icon.contains('jpeg')
+              child: isImage
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: Image.asset(
                         icon,
-                        width: 23,
-                        height: 23,
-                        fit: BoxFit.fill,
+                        width: 26,
+                        height: 26,
+                        fit: BoxFit.cover,
                       ),
                     )
                   : Text(icon, style: const TextStyle(fontSize: 18)),
             ),
           ),
-          const SizedBox(width: 15),
+          const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                height: 1.5,
-              ),
-            ),
+            child: Text(text, style: TextStyle(color: Colors.grey.shade300)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatsSection() {
+  Widget _statCard(String number, String label, int index) {
     return Container(
-      constraints: const BoxConstraints(maxWidth: 450),
-      child: Row(
-        children: [
-          Expanded(child: _buildStatCard('5⭐', 'تقييم العملاء')),
-          const SizedBox(width: 15),
-          Expanded(child: _buildStatCard('1000+', 'عميل راضي')),
-          const SizedBox(width: 15),
-          Expanded(child: _buildStatCard('100%', 'جودة عالية')),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String number, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18),
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.amber.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.amber.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Colors.white.withOpacity(0.02),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.03)),
       ),
       child: Column(
         children: [
-          Text(
-            number,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: Duration(milliseconds: 600 + index * 200),
+            builder: (context, value, child) {
+              return Opacity(opacity: value, child: child);
+            },
+            child: Text(
+              number,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 6),
           Text(
             label,
-            style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
           ),
         ],
       ),

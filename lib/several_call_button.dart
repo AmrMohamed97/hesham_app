@@ -39,7 +39,7 @@ class _SeveralCallButtonState extends State<SeveralCallButton>
       delegate: FlowMenuDelegate(controller: controller),
       children: [
         FloatingActionButton(
-          backgroundColor: Colors.amber,
+          backgroundColor: Colors.amber.withValues(alpha: .8),
           heroTag: 'call',
           onPressed: () {
             if (controller.status == AnimationStatus.completed) {
@@ -79,12 +79,17 @@ class _SeveralCallButtonState extends State<SeveralCallButton>
             }
             controller.reverse();
           },
-          child: const Icon(FontAwesomeIcons.whatsapp, color: Colors.white, size: 30),
+          child: const Icon(
+            FontAwesomeIcons.whatsapp,
+            color: Colors.white,
+            size: 30,
+          ),
         ),
       ],
     );
   }
 }
+
 class FlowMenuDelegate extends FlowDelegate {
   final Animation<double> controller;
   FlowMenuDelegate({required this.controller}) : super(repaint: controller);
